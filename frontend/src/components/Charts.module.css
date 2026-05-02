@@ -1,0 +1,10 @@
+.wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.chart { background: var(--surface); border: var(--border-w) solid var(--text); }
+.chartTitle {
+  font-family: var(--font-display); font-size: 15px; letter-spacing: .14em;
+  text-transform: uppercase; padding: 12px 20px;
+  border-bottom: var(--border-w) solid var(--text);
+  background: var(--surface2); color: var(--text-muted);
+}
+.chartBody { padding: 20px 8px 12px; }
+@media (max-width: 768px) { .wrap { grid-template-columns: 1fr; } }

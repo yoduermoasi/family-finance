@@ -1,0 +1,23 @@
+.bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.label { font-family: var(--font-display); color: rgba(0,0,0,0.55); font-size: 13px; letter-spacing: .14em; }
+.rate  { font-family: var(--font-display); font-size: 18px; letter-spacing: .04em; color: var(--text); }
+.source {
+  font-family: var(--font-display); font-size: 11px; letter-spacing: .1em;
+  color: rgba(0,0,0,0.5); background: rgba(0,0,0,0.1);
+  padding: 2px 8px; border: 1.5px solid rgba(0,0,0,0.2);
+}
+.btn {
+  background: var(--text); color: var(--yellow); border: none;
+  padding: 4px 14px; font-family: var(--font-display); font-size: 13px; letter-spacing: .1em;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+}
+.btnGhost {
+  background: transparent; color: var(--text); border: 2px solid var(--text);
+  padding: 3px 12px; font-family: var(--font-display); font-size: 13px; letter-spacing: .08em;
+}
+.overrideForm { display: flex; gap: 6px; align-items: center; }
+.input {
+  background: rgba(255,255,255,0.7); border: 2px solid var(--text);
+  color: var(--text); border-radius: 0; padding: 4px 10px; width: 120px;
+  font-weight: 700; font-size: 14px;
+}
