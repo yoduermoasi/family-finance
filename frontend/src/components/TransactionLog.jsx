@@ -64,12 +64,15 @@ export default function TransactionLog({ transactions, categories, onUpdate, onD
                     </span>
                   )}
                 </td>
-                <td className={s.amount}>
+                <td className={tx.type === 'reimbursement' ? s.reimbursement : s.amount}>
+                  {tx.type === 'reimbursement' ? '+' : ''}
                   {tx.currency === 'COP'
                     ? `$${tx.originalAmount?.toLocaleString()} COP`
                     : `$${tx.usdAmount?.toFixed(2)}`}
                 </td>
-                <td className={s.amount}>${tx.usdAmount?.toFixed(2)}</td>
+                <td className={tx.type === 'reimbursement' ? s.reimbursement : s.amount}>
+                  {tx.type === 'reimbursement' ? '+' : ''}${tx.usdAmount?.toFixed(2)}
+                </td>
                 <td><span className={s.who}>{tx.who}</span></td>
                 <td><span className={s.source}>{tx.source}</span></td>
                 <td><button className={s.del} onClick={() => remove(tx.id)}>✕</button></td>

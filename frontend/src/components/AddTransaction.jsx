@@ -6,7 +6,7 @@ const TODAY = new Date().toISOString().slice(0, 10);
 
 export default function AddTransaction({ categories, onAdded }) {
   const [form, setForm] = useState({
-    date: TODAY, description: '', category: '', amount: '', currency: 'USD', who: 'Pablo',
+    date: TODAY, description: '', category: '', amount: '', currency: 'USD', who: 'Pablo', type: 'expense',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -30,7 +30,11 @@ export default function AddTransaction({ categories, onAdded }) {
 
   return (
     <form className={s.form} onSubmit={submit}>
-      <h3 className={s.title}>Add Transaction</h3>
+      <div className={s.typeToggle}>
+        <button type="button" className={form.type === 'expense' ? s.typeActive : s.typeBtn} onClick={() => set('type', 'expense')}>Expense</button>
+        <button type="button" className={form.type === 'reimbursement' ? s.typeActive : s.typeBtn} onClick={() => set('type', 'reimbursement')}>Reimbursement</button>
+      </div>
+      <h3 className={s.title}>{form.type === 'reimbursement' ? 'Add Reimbursement' : 'Add Transaction'}</h3>
       {error && <p className={s.error}>{error}</p>}
       <div className={s.grid}>
         <label className={s.field}>

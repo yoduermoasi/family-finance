@@ -36,6 +36,7 @@
 .catBadge:hover { transform: rotate(0deg) scale(1.05); }
 
 .amount { font-variant-numeric: tabular-nums; font-weight: 700; }
+.reimbursement { font-variant-numeric: tabular-nums; font-weight: 700; color: #16a34a; }
 .who { font-family: var(--font-display); color: var(--text-muted); font-size: 13px; letter-spacing: .06em; }
 .source {
   color: var(--text-muted); font-size: 11px; background: var(--surface2);

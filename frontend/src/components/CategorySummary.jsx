@@ -3,8 +3,9 @@ import s from './CategorySummary.module.css';
 export default function CategorySummary({ categories, transactions, totalBudget }) {
   const spent = Object.fromEntries(categories.map(c => [c.id, 0]));
   transactions.forEach(tx => {
-    if (spent[tx.category] !== undefined) spent[tx.category] += tx.usdAmount || 0;
-    else spent['extra'] = (spent['extra'] || 0) + (tx.usdAmount || 0);
+    const amount = (tx.usdAmount || 0) * (tx.type === 'reimbursement' ? -1 : 1);
+    if (spent[tx.category] !== undefined) spent[tx.category] += amount;
+    else spent['extra'] = (spent['extra'] || 0) + amount;
   });
 
   const totalSpent = Object.values(spent).reduce((a, b) => a + b, 0);
