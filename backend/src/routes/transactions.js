@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const { date, description, category, amount, currency = 'USD', who, source = 'manual' } = req.body;
+    const { date, description, category, amount, currency = 'USD', who, source = 'manual', type = 'expense' } = req.body;
     if (!date || !description || !amount || !who)
       return res.status(400).json({ error: 'date, description, amount, who are required' });
 
@@ -39,6 +39,7 @@ router.post('/', async (req, res) => {
       usdAmount,
       who,
       source,
+      type,
       flagged: !category,
       createdAt: new Date().toISOString(),
     };
