@@ -27,7 +27,7 @@ export default function CategorySummary({ categories, transactions, totalBudget 
         <div className={s.masterFill} style={{ width: `${Math.min(pct, 100)}%`, background: pct > 100 ? '#f87171' : pct > 80 ? '#fbbf24' : '#34d399' }} />
       </div>
 
-      <table className={s.table}>
+      <div className={s.tableWrap}><table className={s.table}>
         <thead>
           <tr>
             <th>Category</th><th>Budget</th><th>Spent</th><th>Remaining</th><th>Used</th>
@@ -68,7 +68,7 @@ export default function CategorySummary({ categories, transactions, totalBudget 
             </td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   );
 }

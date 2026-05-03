@@ -53,3 +53,10 @@
 .editRow select { background: var(--surface); border: 2px solid var(--text); color: var(--text); border-radius: 0; padding: 4px 8px; font-family: var(--font-display); letter-spacing: .06em; }
 .save { background: var(--text); color: var(--yellow); border: none; border-radius: 0; padding: 5px 14px; font-family: var(--font-display); font-size: 13px; letter-spacing: .1em; }
 .cancel { background: none; border: 2px solid var(--border); color: var(--text-muted); border-radius: 0; padding: 4px 10px; font-family: var(--font-display); font-size: 13px; letter-spacing: .06em; }
+
+@media (max-width: 640px) {
+  .title { font-size: 17px; padding: 12px 14px; }
+  .tableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table { min-width: 560px; }
+  .table th, .table td { padding: 9px 10px; font-size: 12px; }
+}
