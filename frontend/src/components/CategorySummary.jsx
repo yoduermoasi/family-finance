@@ -9,6 +9,7 @@ export default function CategorySummary({ categories, transactions, totalBudget 
   });
 
   const totalSpent = Object.values(spent).reduce((a, b) => a + b, 0);
+  const savings = totalBudget - totalSpent;
   const pct = totalBudget ? Math.round((totalSpent / totalBudget) * 100) : 0;
 
   return (
@@ -56,6 +57,16 @@ export default function CategorySummary({ categories, transactions, totalBudget 
               </tr>
             );
           })}
+          <tr className={s.savingsRow}>
+            <td><span className={s.dot} style={{ background: '#34d399' }} />Savings</td>
+            <td>${totalBudget?.toLocaleString()}</td>
+            <td className={savings >= 0 ? s.savingsPos : s.savingsNeg}>
+              {savings >= 0 ? '+' : ''}${savings.toFixed(2)}
+            </td>
+            <td colSpan={2} className={s.savingsNote}>
+              {savings >= 0 ? 'kept this month' : 'over budget'}
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
