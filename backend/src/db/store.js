@@ -81,4 +81,19 @@ export const store = {
     );
     return this.getSettings();
   },
+
+  async learnCategory(merchant, category) {
+    const col = getDB().collection('learnedRules');
+    const key = merchant.toLowerCase().trim();
+    await col.updateOne(
+      { merchant: key },
+      { $set: { merchant: key, category, updatedAt: new Date().toISOString() } },
+      { upsert: true }
+    );
+  },
+
+  async getLearnedCategories() {
+    const col = getDB().collection('learnedRules');
+    return col.find().toArray();
+  },
 };

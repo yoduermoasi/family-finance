@@ -54,6 +54,7 @@ export async function syncEmails() {
   });
 
   const messages = data.messages || [];
+  const learnedRules = await store.getLearnedCategories();
   const imported = [];
 
   for (const msg of messages) {
@@ -72,7 +73,7 @@ export async function syncEmails() {
 
     tx.gmailId = msg.id;
     tx.id = uuid();
-    tx.category = autoCategrize(tx.description);
+    tx.category = autoCategrize(tx.description, learnedRules);
     tx.usdAmount = tx.amount;
     tx.originalAmount = tx.amount;
     tx.currency = 'USD';

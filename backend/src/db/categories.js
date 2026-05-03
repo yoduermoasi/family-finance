@@ -21,8 +21,11 @@ const RULES = [
   { keywords: ['fidelity', 'vanguard', 'schwab', 'ira', 'roth'],               category: 'rothira' },
 ];
 
-export function autoCategrize(merchant = '') {
+export function autoCategrize(merchant = '', learnedRules = []) {
   const m = merchant.toLowerCase();
+  for (const rule of learnedRules) {
+    if (m.includes(rule.merchant)) return rule.category;
+  }
   for (const rule of RULES) {
     if (rule.keywords.some(k => m.includes(k))) return rule.category;
   }

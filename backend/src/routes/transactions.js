@@ -52,6 +52,9 @@ router.patch('/:id', async (req, res) => {
   try {
     const updated = await store.updateTransaction(req.params.id, req.body);
     if (!updated) return res.status(404).json({ error: 'Not found' });
+    if (req.body.category && updated.description) {
+      await store.learnCategory(updated.description, req.body.category);
+    }
     res.json(updated);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
