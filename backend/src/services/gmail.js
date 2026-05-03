@@ -49,7 +49,7 @@ export async function syncEmails() {
   const since = Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
   const { data } = await gmail.users.messages.list({
     userId: 'me',
-    q: `after:${since} (from:no.reply.alerts@chase.com OR from:alertsp@notify.chase.com OR from:notifications@alerts.bankofamerica.com OR subject:transaction OR subject:purchase OR subject:charge OR subject:payment OR subject:receipt OR subject:"you spent" OR subject:alert)`,
+    q: `after:${since} (from:no.reply.alerts@chase.com OR from:alertsp@notify.chase.com OR from:notifications@alerts.bankofamerica.com OR subject:transaction OR subject:purchase OR subject:charge OR subject:"you spent")`,
     maxResults: 200,
   });
 
@@ -118,7 +118,7 @@ function parseEmail(msg) {
   const description = bodyMerchant
     ? bodyMerchant[1].trim()
     : subjectMerchant
-      ? subjectMerchant[1].trim().replace(/\s*\*\s*PENDING\s*$/i, '').trim()
+      ? subjectMerchant[1].trim().replace(/\s+Amount\s*$/i, '').replace(/\s*\*\s*PENDING\s*$/i, '').trim()
       : subject
           .replace(/you\s+made\s+a?\s+\$?[\d.,]+\s+(?:purchase\s+)?(?:at|with|from)\s+/i, '')
           .replace(/transaction|purchase|charge|payment|receipt|\$[\d.,]+/gi, '')
