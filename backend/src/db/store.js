@@ -51,6 +51,11 @@ export const store = {
     return result;
   },
 
+  async getTransactionByGmailId(gmailId) {
+    const col = getDB().collection('transactions');
+    return col.findOne({ gmailId });
+  },
+
   async deleteTransaction(id) {
     const col = getDB().collection('transactions');
     const result = await col.deleteOne({ id });

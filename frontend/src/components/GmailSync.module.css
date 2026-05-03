@@ -1,0 +1,32 @@
+.wrap { display: flex; align-items: center; }
+
+.connectBtn, .syncBtn {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  border: 2px solid #fff;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.connectBtn {
+  background: var(--yellow);
+  color: #111;
+}
+
+.syncBtn {
+  background: transparent;
+  color: #fff;
+}
+
+.syncBtn:hover:not(:disabled) { background: rgba(255,255,255,0.15); }
+.syncBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.connected { display: flex; align-items: center; gap: 0.6rem; }
+
+.lastSync { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
+.error    { font-size: 0.75rem; color: #ff6b6b; }
+.ok       { font-size: 0.75rem; color: #34d399; }

@@ -13,6 +13,7 @@
     "express": "^4.19.2",
     "mongodb": "^7.2.0",
     "node-fetch": "^3.3.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "googleapis": "^144.0.0"
   }
 }

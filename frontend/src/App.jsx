@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from './api/client';
 import ExchangeRateBar from './components/ExchangeRateBar';
+import GmailSync from './components/GmailSync';
 import AddTransaction from './components/AddTransaction';
 import TransactionLog from './components/TransactionLog';
 import CategorySummary from './components/CategorySummary';
@@ -54,6 +55,7 @@ export default function App() {
           </div>
         </div>
         <div className={s.headerRight}>
+          <GmailSync onSynced={() => setTransactions(prev => [...prev])} />
           <ExchangeRateBar />
         </div>
       </header>

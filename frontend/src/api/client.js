@@ -23,4 +23,7 @@ export const api = {
   getCategories:     ()        => req('GET', '/categories'),
   getExchangeRate:   ()        => req('GET', '/exchange-rate'),
   setRateOverride:   (rate)    => req('POST', '/exchange-rate/override', { rate }),
+  getGmailStatus:    ()        => req('GET', '/gmail/status'),
+  syncGmail:         ()        => req('POST', '/gmail/sync'),
+  getGmailAuthUrl:   ()        => (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/api/gmail/auth',
 };
