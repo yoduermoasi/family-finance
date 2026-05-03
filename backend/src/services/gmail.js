@@ -49,8 +49,8 @@ export async function syncEmails() {
   const since = Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
   const { data } = await gmail.users.messages.list({
     userId: 'me',
-    q: `after:${since} (subject:transaction OR subject:purchase OR subject:charge OR subject:payment OR subject:receipt OR subject:"you spent")`,
-    maxResults: 100,
+    q: `after:${since} (from:no.reply.alerts@chase.com OR from:alertsp@notify.chase.com OR from:notifications@alerts.bankofamerica.com OR subject:transaction OR subject:purchase OR subject:charge OR subject:payment OR subject:receipt OR subject:"you spent" OR subject:alert)`,
+    maxResults: 200,
   });
 
   const messages = data.messages || [];
@@ -73,6 +73,13 @@ export async function syncEmails() {
     tx.gmailId = msg.id;
     tx.id = uuid();
     tx.category = autoCategrize(tx.description);
+    tx.usdAmount = tx.amount;
+    tx.originalAmount = tx.amount;
+    tx.currency = 'USD';
+    tx.who = 'Pablo';
+    tx.type = 'expense';
+    tx.flagged = false;
+    tx.createdAt = new Date().toISOString();
     await store.addTransaction(tx);
     imported.push(tx);
   }
@@ -89,7 +96,6 @@ function parseEmail(msg) {
 
   const body = extractBody(msg.payload);
 
-  // Try to extract amount
   const amountMatch =
     body.match(/\$\s*(\d{1,6}(?:[.,]\d{2})?)/i) ||
     body.match(/USD\s*(\d{1,6}(?:[.,]\d{2})?)/i) ||
@@ -100,27 +106,55 @@ function parseEmail(msg) {
   const amount = parseFloat(amountMatch[1].replace(',', ''));
   if (!amount || amount <= 0) return null;
 
-  // Try to extract merchant
-  const merchantMatch =
-    body.match(/(?:at|to|from|merchant|store|retailer)[:\s]+([A-Za-z0-9\s&'.,-]{2,40}?)(?:\s*[\n\r$|*]|on\s|\d{4})/i) ||
-    body.match(/(?:purchase at|charged at|used at)\s+([A-Za-z0-9\s&'.,-]{2,40})/i);
+  // Try body patterns first
+  const bodyMerchant =
+    body.match(/(?:purchase at|charged at|used at|transaction at)\s+([A-Za-z0-9\s&'.*,-]{2,40})/i) ||
+    body.match(/(?:at|to|from|with|merchant|store|retailer)[:\s]+([A-Za-z0-9\s&'.*,-]{2,40}?)(?:\s*[\n\r$|]|on\s|\d{4})/i);
 
-  const description = merchantMatch
-    ? merchantMatch[1].trim()
-    : subject.replace(/transaction|purchase|charge|payment|receipt|\$/gi, '').trim().slice(0, 40) || 'Email import';
+  // Try subject patterns: "You made a $X.XX [purchase] at/with MERCHANT"
+  const subjectMerchant = !bodyMerchant &&
+    subject.match(/(?:at|with|from)\s+([A-Za-z0-9\s&'.*,-]{2,40}?)(?:\s*$|\s+on\s|\s*\d)/i);
+
+  const description = bodyMerchant
+    ? bodyMerchant[1].trim()
+    : subjectMerchant
+      ? subjectMerchant[1].trim().replace(/\s*\*\s*PENDING\s*$/i, '').trim()
+      : subject
+          .replace(/you\s+made\s+a?\s+\$?[\d.,]+\s+(?:purchase\s+)?(?:at|with|from)\s+/i, '')
+          .replace(/transaction|purchase|charge|payment|receipt|\$[\d.,]+/gi, '')
+          .trim().slice(0, 40) || 'Email import';
 
   return { amount, description, date, source: 'gmail' };
 }
 
+function stripHtml(html) {
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function extractBody(payload) {
   if (!payload) return '';
+  if (payload.mimeType === 'text/plain' && payload.body?.data) {
+    return Buffer.from(payload.body.data, 'base64').toString('utf-8');
+  }
+  if (payload.mimeType === 'text/html' && payload.body?.data) {
+    return stripHtml(Buffer.from(payload.body.data, 'base64').toString('utf-8'));
+  }
   if (payload.body?.data) {
     return Buffer.from(payload.body.data, 'base64').toString('utf-8');
   }
   if (payload.parts) {
+    const plain = payload.parts.find(p => p.mimeType === 'text/plain');
+    if (plain) { const t = extractBody(plain); if (t) return t; }
     for (const part of payload.parts) {
-      const text = extractBody(part);
-      if (text) return text;
+      const t = extractBody(part);
+      if (t) return t;
     }
   }
   return '';
