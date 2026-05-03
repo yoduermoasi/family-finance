@@ -51,6 +51,11 @@ export const store = {
     return result;
   },
 
+  async getTransactionByPlaidId(plaidId) {
+    const col = getDB().collection('transactions');
+    return col.findOne({ plaidId });
+  },
+
   async getTransactionByGmailId(gmailId) {
     const col = getDB().collection('transactions');
     return col.findOne({ gmailId });

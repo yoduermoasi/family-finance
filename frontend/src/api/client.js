@@ -26,4 +26,8 @@ export const api = {
   getGmailStatus:    ()        => req('GET', '/gmail/status'),
   syncGmail:         ()        => req('POST', '/gmail/sync'),
   getGmailAuthUrl:   ()        => (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/api/gmail/auth',
+  plaidCreateLinkToken: ()            => req('POST', '/plaid/create-link-token'),
+  plaidExchangeToken:   (pt, inst)    => req('POST', '/plaid/exchange-token', { public_token: pt, institution: inst }),
+  plaidStatus:          ()            => req('GET', '/plaid/status'),
+  plaidSync:            ()            => req('POST', '/plaid/sync'),
 };

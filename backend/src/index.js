@@ -5,6 +5,7 @@ import { connectDB } from './db/store.js';
 import transactionsRouter from './routes/transactions.js';
 import settingsRouter from './routes/settings.js';
 import gmailRouter from './routes/gmail.js';
+import plaidRouter from './routes/plaid.js';
 
 config();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use('/api/transactions', transactionsRouter);
 app.use('/api', settingsRouter);
 app.use('/api', gmailRouter);
+app.use('/api', plaidRouter);
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
 connectDB()

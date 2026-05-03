@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from './api/client';
 import ExchangeRateBar from './components/ExchangeRateBar';
 import GmailSync from './components/GmailSync';
+import PlaidConnect from './components/PlaidConnect';
 import AddTransaction from './components/AddTransaction';
 import TransactionLog from './components/TransactionLog';
 import CategorySummary from './components/CategorySummary';
@@ -55,6 +56,7 @@ export default function App() {
           </div>
         </div>
         <div className={s.headerRight}>
+          <PlaidConnect onSynced={() => api.getTransactions(year, month).then(setTransactions)} />
           <GmailSync onSynced={() => setTransactions(prev => [...prev])} />
           <ExchangeRateBar />
         </div>
