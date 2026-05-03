@@ -1,27 +1,40 @@
 import { useState, useEffect, useCallback } from 'react';
-import { usePlaidLink } from 'react-plaid-link';
 import { api } from '../api/client';
 import s from './PlaidConnect.module.css';
 
+function loadPlaidScript() {
+  return new Promise((resolve) => {
+    if (window.Plaid) return resolve();
+    const script = document.createElement('script');
+    script.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js';
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
+
 function LinkButton({ onSuccess }) {
-  const [token, setToken] = useState(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    api.plaidCreateLinkToken().then(({ link_token }) => setToken(link_token)).catch(() => {});
+    loadPlaidScript().then(() => setReady(true));
   }, []);
 
-  const onPlaidSuccess = useCallback((publicToken, metadata) => {
-    api.plaidExchangeToken(publicToken, metadata.institution?.name || 'Bank')
-      .then(onSuccess)
-      .catch(console.error);
+  const open = useCallback(async () => {
+    const { link_token } = await api.plaidCreateLinkToken();
+    const handler = window.Plaid.create({
+      token: link_token,
+      onSuccess: (publicToken, metadata) => {
+        api.plaidExchangeToken(publicToken, metadata.institution?.name || 'Bank')
+          .then(onSuccess)
+          .catch(console.error);
+      },
+      onExit: () => {},
+    });
+    handler.open();
   }, [onSuccess]);
 
-  const { open, ready } = usePlaidLink({ token, onSuccess: onPlaidSuccess });
-
-  if (!token) return null;
-
   return (
-    <button className={s.connectBtn} onClick={() => open()} disabled={!ready}>
+    <button className={s.connectBtn} onClick={open} disabled={!ready}>
       + Connect Bank
     </button>
   );
@@ -49,7 +62,7 @@ export default function PlaidConnect({ onSynced }) {
       const data = await api.plaidSync();
       setResult(data.imported);
       if (data.imported > 0) onSynced?.();
-      setStatus(s => ({ ...s, lastSync: new Date().toISOString() }));
+      setStatus(prev => ({ ...prev, lastSync: new Date().toISOString() }));
     } catch {
       setResult(-1);
     } finally {
