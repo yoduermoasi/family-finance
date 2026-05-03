@@ -37,7 +37,8 @@
 
 .amount { font-variant-numeric: tabular-nums; font-weight: 700; }
 .reimbursement { font-variant-numeric: tabular-nums; font-weight: 700; color: #16a34a; }
-.who { font-family: var(--font-display); color: var(--text-muted); font-size: 13px; letter-spacing: .06em; }
+.who { font-family: var(--font-display); color: var(--text-muted); font-size: 13px; letter-spacing: .06em; cursor: pointer; }
+.who:hover { color: var(--accent); }
 .source {
   color: var(--text-muted); font-size: 11px; background: var(--surface2);
   padding: 2px 8px; border: 1.5px solid #D0CDC4;

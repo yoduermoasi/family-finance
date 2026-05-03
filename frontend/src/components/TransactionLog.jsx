@@ -10,11 +10,19 @@ const CAT_COLORS = {
 export default function TransactionLog({ transactions, categories, onUpdate, onDelete }) {
   const [editId, setEditId] = useState(null);
   const [editCat, setEditCat] = useState('');
+  const [editWhoId, setEditWhoId] = useState(null);
+  const [editWho, setEditWho] = useState('');
 
   const saveEdit = async (id) => {
     const updated = await api.updateTransaction(id, { category: editCat, flagged: false });
     onUpdate(updated);
     setEditId(null);
+  };
+
+  const saveWho = async (id) => {
+    const updated = await api.updateTransaction(id, { who: editWho });
+    onUpdate(updated);
+    setEditWhoId(null);
   };
 
   const remove = async (id) => {
@@ -73,7 +81,22 @@ export default function TransactionLog({ transactions, categories, onUpdate, onD
                 <td className={tx.type === 'reimbursement' ? s.reimbursement : s.amount}>
                   {tx.type === 'reimbursement' ? '+' : ''}${tx.usdAmount?.toFixed(2)}
                 </td>
-                <td><span className={s.who}>{tx.who}</span></td>
+                <td>
+                  {editWhoId === tx.id ? (
+                    <div className={s.editRow}>
+                      <select value={editWho} onChange={e => setEditWho(e.target.value)}>
+                        <option value="Pablo">Pablo</option>
+                        <option value="Camila">Camila</option>
+                      </select>
+                      <button className={s.save} onClick={() => saveWho(tx.id)}>Save</button>
+                      <button className={s.cancel} onClick={() => setEditWhoId(null)}>✕</button>
+                    </div>
+                  ) : (
+                    <span className={s.who} onClick={() => { setEditWhoId(tx.id); setEditWho(tx.who || 'Pablo'); }} title="Click to edit">
+                      {tx.who}
+                    </span>
+                  )}
+                </td>
                 <td><span className={s.source}>{tx.source}</span></td>
                 <td><button className={s.del} onClick={() => remove(tx.id)}>✕</button></td>
               </tr>
