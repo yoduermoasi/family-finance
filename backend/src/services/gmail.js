@@ -67,9 +67,11 @@ export async function syncEmails() {
     const tx = parseEmail(full);
     if (!tx) continue;
 
-    // Skip duplicates by gmail message id
+    // Skip duplicates and previously deleted transactions
     const existing = await store.getTransactionByGmailId(msg.id);
     if (existing) continue;
+    const wasDeleted = await store.isGmailIdDeleted(msg.id);
+    if (wasDeleted) continue;
 
     tx.gmailId = msg.id;
     tx.id = uuid();

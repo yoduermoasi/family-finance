@@ -63,10 +63,29 @@ export const store = {
 
   async deleteTransaction(id) {
     const col = getDB().collection('transactions');
+    const tx = await col.findOne({ id });
+    if (tx?.gmailId) {
+      await getDB().collection('deletedTransactions').updateOne(
+        { gmailId: tx.gmailId },
+        { $set: { gmailId: tx.gmailId, deletedAt: new Date().toISOString() } },
+        { upsert: true }
+      );
+    }
+    if (tx?.plaidId) {
+      await getDB().collection('deletedTransactions').updateOne(
+        { plaidId: tx.plaidId },
+        { $set: { plaidId: tx.plaidId, deletedAt: new Date().toISOString() } },
+        { upsert: true }
+      );
+    }
     const result = await col.deleteOne({ id });
     return result.deletedCount > 0;
   },
 
+  async isGmailIdDeleted(gmailId) {
+    const col = getDB().collection('deletedTransactions');
+    return !!(await col.findOne({ gmailId }));
+  },
   async getSettings() {
     const col = getDB().collection('settings');
     return (await col.findOne({ _id: 'global' })) || {};
