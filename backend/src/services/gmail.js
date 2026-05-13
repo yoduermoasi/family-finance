@@ -47,11 +47,22 @@ export async function syncEmails() {
   const gmail = google.gmail({ version: 'v1', auth: client });
 
   const since = Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
-  const { data } = await gmail.users.messages.list({
-    userId: 'me',
-    q: `after:${since} (from:no.reply.alerts@chase.com OR from:alertsp@notify.chase.com OR from:notifications@alerts.bankofamerica.com OR subject:transaction OR subject:purchase OR subject:charge OR subject:"you spent")`,
-    maxResults: 200,
-  });
+  let data;
+  try {
+    ({ data } = await gmail.users.messages.list({
+      userId: 'me',
+      q: `after:${since} (from:no.reply.alerts@chase.com OR from:alertsp@notify.chase.com OR from:notifications@alerts.bankofamerica.com OR subject:transaction OR subject:purchase OR subject:charge OR subject:"you spent")`,
+      maxResults: 200,
+    }));
+  } catch (err) {
+    if (err.response?.data?.error === 'invalid_grant' || err.message?.includes('invalid_grant')) {
+      await store.updateSettings({ gmailConnected: false, gmailTokens: null });
+      const authErr = new Error('gmail_disconnected');
+      authErr.code = 'GMAIL_DISCONNECTED';
+      throw authErr;
+    }
+    throw err;
+  }
 
   const messages = data.messages || [];
   const learnedRules = await store.getLearnedCategories();

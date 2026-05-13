@@ -27,7 +27,11 @@ export default function GmailSync({ onSynced }) {
       if (data.imported > 0) onSynced?.();
       setStatus(s => ({ ...s, lastSync: new Date().toISOString() }));
     } catch (err) {
-      setResult(-1);
+      if (err.message?.includes('gmail_disconnected')) {
+        setStatus(s => ({ ...s, connected: false }));
+      } else {
+        setResult(-1);
+      }
     } finally {
       setSyncing(false);
     }

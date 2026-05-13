@@ -39,6 +39,9 @@ router.post('/gmail/sync', async (_req, res) => {
     const imported = await syncEmails();
     res.json({ imported: imported.length, transactions: imported });
   } catch (err) {
+    if (err.code === 'GMAIL_DISCONNECTED') {
+      return res.status(401).json({ error: 'gmail_disconnected' });
+    }
     res.status(500).json({ error: err.message });
   }
 });
